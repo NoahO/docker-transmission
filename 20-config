@@ -31,37 +31,37 @@ chown abc:abc \
 chmod 755 /config/blocklist-update.sh
 
 # Set downloads folder
-jq -r '."download-dir" |= "/downloads/Downloads"' /config/settings.json > temp.json && mv temp.json /config/settings.json
+jq -r '."download-dir" |= "/downloads/Downloads"' /config/settings.json >temp.json && mv temp.json /config/settings.json
 
 # Set incomplete folder
-jq -r '."incomplete-dir" |= "/downloads/Downloads/incomplete-torrents"' /config/settings.json > temp.json && mv temp.json /config/settings.json
-jq -r '."incomplete-dir-enabled" |= true' /config/settings.json > temp.json && mv temp.json /config/settings.json
+jq -r '."incomplete-dir" |= "/downloads/Downloads/incomplete-torrents"' /config/settings.json >temp.json && mv temp.json /config/settings.json
+jq -r '."incomplete-dir-enabled" |= true' /config/settings.json >temp.json && mv temp.json /config/settings.json
 
 # Disable download queue (halts on stalled torrents)
-jq -r '."download-queue-enabled" |= false' /config/settings.json > temp.json && mv temp.json /config/settings.json
+jq -r '."download-queue-enabled" |= false' /config/settings.json >temp.json && mv temp.json /config/settings.json
 
 # Set completion script for transmission
-jq -r '."script-torrent-done-enabled" |= true' /config/settings.json > temp.json && mv temp.json /config/settings.json
-jq -r '."script-torrent-done-filename" |= "/nzbtomedia/TorrentToMedia.py"' /config/settings.json > temp.json && mv temp.json /config/settings.json
+jq -r '."script-torrent-done-enabled" |= true' /config/settings.json >temp.json && mv temp.json /config/settings.json
+jq -r '."script-torrent-done-filename" |= "/nzbtomedia/TorrentToMedia.py"' /config/settings.json >temp.json && mv temp.json /config/settings.json
 
 # Turn on rpc whitelist
-jq -r '."rpc-host-whitelist-enabled" |= true' /config/settings.json > temp.json && mv temp.json /config/settings.json
-jq -r '."rpc-host-whitelist" |= "*"' /config/settings.json > temp.json && mv temp.json /config/settings.json
-jq -r '."rpc-whitelist-enabled" |= false' /config/settings.json > temp.json && mv temp.json /config/settings.json
+jq -r '."rpc-host-whitelist-enabled" |= true' /config/settings.json >temp.json && mv temp.json /config/settings.json
+jq -r '."rpc-host-whitelist" |= "*"' /config/settings.json >temp.json && mv temp.json /config/settings.json
+jq -r '."rpc-whitelist-enabled" |= false' /config/settings.json >temp.json && mv temp.json /config/settings.json
 
-while [ ! -f /nzbtomedia/autoProcessMedia.cfg ] ;
-do
-      sleep 1
-      echo "Waiting for nzbtomedia volume to be ready"
+while [ ! -f /nzbtomedia/autoProcessMedia.cfg ]; do
+	sleep 1
+	echo "Waiting for nzbtomedia volume to be ready"
 done
 
 sleep 3
 
 #  Set up transmission
+sed -i '/\[Torrent\]/,/^$/ s/host = .*/host = transmission/' /nzbtomedia/autoProcessMedia.cfg
 sed -i '/\[Torrent\]/,/^$/ s/clientAgent = .*/clientAgent = transmission/' /nzbtomedia/autoProcessMedia.cfg
 sed -i '/\[Torrent\]/,/^$/ s/outputDirectory = .*/outputDirectory = \/downloads\/Downloads\//' /nzbtomedia/autoProcessMedia.cfg
 sed -i '/\[Torrent\]/,/^$/ s/default_downloadDirectory =.*/default_downloadDirectory = \/downloads\/Downloads/' /nzbtomedia/autoProcessMedia.cfg
-sed -i '/\[Torrent\]/,/^$/ s/TransmissionHost = .*/TransmissionHost = 172.18.0.1/' /nzbtomedia/autoProcessMedia.cfg
+sed -i '/\[Torrent\]/,/^$/ s/TransmissionHost = .*/TransmissionHost = localhost/' /nzbtomedia/autoProcessMedia.cfg
 sed -i '/\[Torrent\]/,/^$/ s/TransmissionUSR = .*/TransmissionUSR =/' /nzbtomedia/autoProcessMedia.cfg
 sed -i '/\[Torrent\]/,/^$/ s/TransmissionPWD = .*/TransmissionPWD =/' /nzbtomedia/autoProcessMedia.cfg
 sed -i '/\[Torrent\]/,/^$/ s/useLink = .*/useLink = move-sym/' /nzbtomedia/autoProcessMedia.cfg
