@@ -54,7 +54,17 @@ while [ ! -f /nzbtomedia/autoProcessMedia.cfg ]; do
 	echo "Waiting for nzbtomedia volume to be ready"
 done
 
-sleep 3
+#This will fail if I use net=host.
+
+while  ! $(curl -f http://sickchill:8081/sickchill &> /dev/null || exit 1) ; do
+	sleep 1
+	echo "Waiting for sickchill to be ready, so that I don't postprocess early"
+done
+
+while  ! $(curl -f http://couchpotato:5050 &> /dev/null || exit 1) ; do
+	sleep 1
+	echo "Waiting for couchpotato to be ready, so that I don't postprocess early"
+done
 
 #  Set up transmission
 sed -i '/\[Torrent\]/,/^$/ s/host = .*/host = transmission/' /nzbtomedia/autoProcessMedia.cfg

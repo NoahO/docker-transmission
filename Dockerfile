@@ -9,4 +9,4 @@ RUN apk add --no-cache python ffmpeg git php-cli && \
 COPY phpsed.php /
 COPY 20-config /etc/cont-init.d/
 
-HEALTHCHECK CMD curl -f http://localhost:9091 || exit 1
+HEALTHCHECK --start-period=600s CMD curl -f http://localhost:9091 || exit 1
